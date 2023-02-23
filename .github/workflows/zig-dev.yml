@@ -1,0 +1,12 @@
+name: Update zig-dev
+
+on:
+  schedule:
+    - cron: 0 */8 * * *
+
+jobs:
+  update-zig-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: scripts/zig-dev.sh
