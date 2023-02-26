@@ -1,11 +1,14 @@
 name: Update zig-dev
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: 0 */8 * * *
 
 jobs:
   update-zig-dev:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
