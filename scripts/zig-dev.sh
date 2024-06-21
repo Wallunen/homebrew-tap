@@ -2,7 +2,7 @@
 set -eu
 
 self=$$
-file=Formula/zig-dev.rb
+file=Formula/z/zig-dev.rb
 
 try() {
   "$@" || kill $self
