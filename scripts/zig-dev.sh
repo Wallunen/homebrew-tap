@@ -5,7 +5,7 @@ self=$$
 file=Formula/z/zig-dev.rb
 
 try() {
-  "$@" || kill $self
+  "$@" || kill "${self}"
 }
 
 # shellcheck disable=SC2016
@@ -17,38 +17,21 @@ try curl \
   https://ziglang.org/download/index.json |
   try jq \
     --raw-output \
-    --arg formula "$(cat $file)" \
-    '.master as $info |
-    $formula | match("version \"([^\"]*)\"").captures[0].string as $version |
-    if $version == $info.version then
-      halt
-    else
-      [
-        $version,
-        $info.version,
-        (
-          $formula | split($version) | join($info.version) |
-          reduce match("sha256 \"([^\"]*)\" # (.*)"; "g").captures as $capture (.;
-            .[:$capture[0].offset] +
-            $info[$capture[1].string].shasum +
-            .[$capture[0].offset + $capture[0].length:]
-          )
-        )
-      ][]
-    end' |
+    --join-output \
+    --rawfile f "${file}" \
+    '.master as $m | $m.version as $v | $f | split(capture("version \"(?<v>[^\"]*)\"").v) | join($v) | $v, "\n", gsub("\"[^\"]*(?<a>\" # )(?<b>.+)"; "\"\($m[.b].shasum)\(.a)\(.b)")' |
   {
-    read -r old_version || exit 0
-    read -r new_version
+    read -r version
 
-    cat >$file
-    git add $file
+    cat >"${file}"
+    git diff --quiet -- "${file}" && exit
 
     name=${file##*/}
     name=${name%.*}
 
-    git commit --message="Update $name from $old_version to $new_version" $file
+    git commit --message="${name} ${version}" -- "${file}"
 
-    if [ "${CI-}" ]; then
+    if [ -n "${CI-}" ]; then
       git push
     fi
   }
