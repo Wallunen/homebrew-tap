@@ -19,7 +19,7 @@ try curl \
     --raw-output \
     --join-output \
     --rawfile f "${file}" \
-    '.master as $m | $m.version as $v | $f | split(capture("version \"(?<v>[^\"]*)\"").v) | join($v) | $v, "\n", gsub("\"[^\"]*(?<a>\" # )(?<b>.+)"; "\"\($m[.b].shasum)\(.a)\(.b)")' |
+    '.master as $m | $f | . / capture("version \"(?<v>[^\"]*)\"").v | join($m.version) | $m.version, "\n", gsub("\"[^\"]*\" # (?<b>.+)"; "\"\($m[.b].shasum)\" # \(.b)")' |
   {
     read -r version
 
