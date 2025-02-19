@@ -2,36 +2,88 @@
 set -eu
 
 self=$$
-file=Formula/z/zig-dev.rb
 
 try() {
   "$@" || kill "${self}"
 }
 
-# shellcheck disable=SC2016
-try curl \
-  --fail \
-  --location \
-  --show-error \
-  --silent \
-  https://ziglang.org/download/index.json |
-  try jq \
-    --raw-output \
-    --join-output \
-    --rawfile f "${file}" \
-    '.master as $m | $f | . / capture("version \"(?<v>[^\"]*)\"").v | join($m.version) | $m.version, "\n", gsub("\"[^\"]*\" # (?<b>.+)"; "\"\($m[.b].shasum)\" # \(.b)")' |
-  {
-    read -r version
+update_zig=0
+update_zls=0
 
-    cat >"${file}"
-    git diff --quiet -- "${file}" && exit
+for argument; do
+  case ${argument} in
+  zig-dev)
+    update_zig=1
+    ;;
+  zls-dev)
+    update_zls=1
+    ;;
+  esac
+done
 
-    name=${file##*/}
-    name=${name%.*}
+zig_version_regex='version "(?<v>[^"]*)"'
 
-    git commit --message="${name} ${version}" -- "${file}"
+upgrade() {
+  # shellcheck disable=SC2016
+  try curl \
+    --fail \
+    --location \
+    --show-error \
+    --silent \
+    -- \
+    "$2" |
+    try jq \
+      --raw-output \
+      --join-output \
+      --arg s '"[^"]*" # (?<b>.+)' \
+      --arg v "${zig_version_regex}" \
+      --argjson r "$3" \
+      --rawfile f "$1" \
+      'getpath($r) as $m | $f | . / capture($v).v | join($m.version) | $m.version, "\n", gsub($s; "\"\($m[.b].shasum)\" # \(.b)")' |
+    {
+      read -r version
 
-    if [ -n "${CI-}" ]; then
-      git push
-    fi
-  }
+      cat >"$1"
+
+      if git diff --quiet -- "$1"; then
+        return
+      fi
+
+      name=${1##*/}
+      name=${name%.*}
+
+      git commit --message="${name} ${version}" -- "$1"
+    }
+}
+
+zig_file=Formula/z/zig-dev.rb
+zls_file=Formula/z/zls-dev.rb
+
+if [ "${update_zig}" = 1 ]; then
+  upgrade \
+    "${zig_file}" \
+    https://ziglang.org/download/index.json \
+    '["master"]'
+fi
+
+if [ "${update_zls}" = 1 ]; then
+  url=$(
+    jq \
+      --raw-input \
+      --raw-output \
+      --arg v "${zig_version_regex}" \
+      -- \
+      '@uri "https://releases.zigtools.org/v1/zls/select-version?zig_version=\(capture($v).v)&compatibility=only-runtime"' \
+      "${zig_file}"
+  )
+
+  upgrade \
+    "${zls_file}" \
+    "${url}" \
+    '[]'
+
+fi
+
+if [ -n "${CI-}" ]; then
+  git push
+fi

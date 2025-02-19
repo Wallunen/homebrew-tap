@@ -1,4 +1,4 @@
-name: Update zig-dev
+name: Update zig-dev & zls-dev
 
 on:
   workflow_dispatch:
@@ -15,4 +15,4 @@ jobs:
       - run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          scripts/update.sh
+          scripts/update.sh zig-dev zls-dev
