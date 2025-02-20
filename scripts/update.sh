@@ -81,7 +81,6 @@ if [ "${update_zls}" = 1 ]; then
     "${zls_file}" \
     "${url}" \
     '[]'
-
 fi
 
 if [ -n "${CI-}" ]; then
