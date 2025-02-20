@@ -27,6 +27,7 @@ class ZigDev < Formula
   depends_on macos: :big_sur # https://github.com/ziglang/zig/issues/13313
   depends_on "z3"
   depends_on "zstd"
+
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
@@ -35,5 +36,30 @@ class ZigDev < Formula
   def install
     bin.install "zig"
     lib.install "lib" => "zig"
+  end
+
+  test do
+    (testpath/"hello.zig").write <<~ZIG
+      const std = @import("std");
+      pub fn main() !void {
+          const stdout = std.io.getStdOut().writer();
+          try stdout.print("Hello, world!", .{});
+      }
+    ZIG
+    system bin/"zig", "build-exe", "hello.zig"
+    assert_equal "Hello, world!", shell_output("./hello")
+
+    # error: 'TARGET_OS_IPHONE' is not defined, evaluates to 0
+    # https://github.com/ziglang/zig/issues/10377
+    ENV.delete "CPATH"
+    (testpath/"hello.c").write <<~C
+      #include <stdio.h>
+      int main() {
+        fprintf(stdout, "Hello, world!");
+        return 0;
+      }
+    C
+    system bin/"zig", "cc", "hello.c", "-o", "hello"
+    assert_equal "Hello, world!", shell_output("./hello")
   end
 end
