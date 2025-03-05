@@ -39,9 +39,11 @@ upgrade() {
       --arg v "${zig_version_regex}" \
       --argjson r "$3" \
       --rawfile f "$1" \
-      'getpath($r) as $m | $f | . / capture($v).v | join($m.version) | $m.version, "\n", gsub($s; "\"\($m[.b].shasum)\" # \(.b)")' |
+      'getpath($r) as $m | $f | . / capture($v).v | join($m.version // halt) | $m.version, "\n", gsub($s; "\"\($m[.b].shasum)\" # \(.b)")' |
     {
-      read -r version
+      if ! read -r version; then
+        return 0
+      fi
 
       cat >"$1"
 
