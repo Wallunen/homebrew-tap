@@ -4,20 +4,20 @@ class ZlsDev < Formula
 
   if OS.mac?
     if Hardware::CPU.intel?
-      sha256 "205dde7ac145adb22c2c156f59f818cf23e59d90c8df5f5b3521aebac1dc270f" # x86_64-macos
+      sha256 "36ed8f9c8ba8ad22dae49b4dda00296ff5c40c91d3bdf1b6bdf5ec1165c4a90c" # x86_64-macos
     else
       arch = "aarch64"
-      sha256 "58b50062b143665e9c5eaf8ed2046ed1c4fa0d777871de1d0d33de4be08a6d9b" # aarch64-macos
+      sha256 "28b2bd409eb42c0dff9118302bf40058b8c982eac1b6d1db4b24b3444300bde2" # aarch64-macos
     end
   else
     os = "linux"
-    sha256 "4ad9a389a5b325f2d6f29b619649151fd8e90d7950a7f92a90c43963a1280cd7" # x86_64-linux
+    sha256 "e4e39220a5898312b249ac2cdc3aa69ebe8d64c4c1501d32cd62efe82192cdcf" # x86_64-linux
   end
 
   desc "Development build of the ZLS language server for Zig"
   homepage "https://zigtools.org/zls/"
-  url "https://builds.zigtools.org/zls-#{os}-#{arch}-0.15.0-dev.16+046bb2e.tar.xz"
-  version "0.15.0-dev.16+046bb2e"
+  url "https://builds.zigtools.org/zls-#{os}-#{arch}-0.15.0-dev.17+b30d4de.tar.xz"
+  version "0.15.0-dev.17+b30d4de"
   license "MIT"
   head "https://github.com/zigtools/zls.git", branch: "master"
 
