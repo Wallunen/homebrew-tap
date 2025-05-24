@@ -16,7 +16,7 @@ class ZigDev < Formula
 
   desc "Development build of the Zig programming language"
   homepage "https://ziglang.org/"
-  url "https://ziglang.org/builds/zig-#{os}-#{arch}-0.15.0-dev.631+9a3540d61.tar.xz"
+  url "https://ziglang.org/builds/zig-#{arch}-#{os}-0.15.0-dev.631+9a3540d61.tar.xz"
   version "0.15.0-dev.631+9a3540d61"
   license "MIT"
 
