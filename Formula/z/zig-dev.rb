@@ -4,20 +4,20 @@ class ZigDev < Formula
 
   if OS.mac?
     if Hardware::CPU.intel?
-      sha256 "02bfba5e1dd335c15a779a60350b7d1077aa58d8bdb64e7b9b0c54e4066c1c1b" # x86_64-macos
+      sha256 "7c1ab2fa545dab2dde56cc5fa824f0ae4467b91af00c7d82d1c0d96214cfec0b" # x86_64-macos
     else
       arch = "aarch64"
-      sha256 "22aab69ecf48d35b5fbf789ff8d921bafb6d217fbf3f0531690bd5e9bf7f9eb4" # aarch64-macos
+      sha256 "5b3949b642f9d97acd893dcf308ef6ce9b8ec6a502bed04dc832b2b677366752" # aarch64-macos
     end
   else
     os = "linux"
-    sha256 "970112cb49d461eb400900c5fee5fc9a78146d9cfde8f44d36d3900d34ccdd15" # x86_64-linux
+    sha256 "a8092faec5b70bf3f0230b2c066e802f1c185ba591837bb5ddb1fb1d128e96d4" # x86_64-linux
   end
 
   desc "Development build of the Zig programming language"
   homepage "https://ziglang.org/"
-  url "https://ziglang.org/builds/zig-#{arch}-#{os}-0.16.0-dev.2296+fd3657bf8.tar.xz"
-  version "0.16.0-dev.2296+fd3657bf8"
+  url "https://ziglang.org/builds/zig-#{arch}-#{os}-0.16.0-dev.2322+ff8dbd010.tar.xz"
+  version "0.16.0-dev.2322+ff8dbd010"
   license "MIT"
 
   livecheck do
