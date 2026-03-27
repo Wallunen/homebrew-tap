@@ -48,7 +48,7 @@ jobs:
 
       - name: Install development tools
         if: runner.os == 'Linux'
-        run: apt-get update && apt-get install -y build-essential
+        run: sudo apt-get update && sudo apt-get install -y build-essential
 
       - name: Build bottles
         shell: bash
