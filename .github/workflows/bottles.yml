@@ -64,8 +64,6 @@ jobs:
             brew install --build-bottle --ignore-dependencies "${TAP}/${f}"
             brew bottle --json --root-url="$ROOT_URL" "${TAP}/${f}"
           done
-
-          ls -la *.bottle.*
         timeout-minutes: 60
 
       - name: Upload bottles
@@ -102,7 +100,7 @@ jobs:
             --repo "${{ github.repository }}" \
             --title "Bottles for ${GITHUB_SHA::8}" \
             --notes "Automated bottle build for commit ${GITHUB_SHA}" \
-            *.bottle.tar.gz
+            *.bottle.*.tar.gz
 
       - name: Update formulae with bottle blocks
         env:
