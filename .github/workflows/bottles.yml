@@ -54,7 +54,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          ROOT_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
+          ROOT_URL="https://github.com/${{ github.repository }}/releases/download/bottles-${GITHUB_SHA::8}"
           TAP="${{ github.repository_owner }}/tap"
           IFS=',' read -ra formulae <<< "${{ steps.formulae.outputs.list }}"
 
@@ -96,7 +96,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ github.sha }}" \
+          gh release create "bottles-${GITHUB_SHA::8}" \
             --repo "${{ github.repository }}" \
             --title "Bottles for ${GITHUB_SHA::8}" \
             --notes "Automated bottle build for commit ${GITHUB_SHA}" \
