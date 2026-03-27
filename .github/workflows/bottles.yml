@@ -116,5 +116,5 @@ jobs:
           if ! git diff --quiet -- Formula/; then
             git add Formula/
             git commit -m "Update bottle blocks"
-            git push
+            git push origin main
           fi
