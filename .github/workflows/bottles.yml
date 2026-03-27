@@ -62,6 +62,7 @@ jobs:
             brew uninstall --ignore-dependencies "${TAP}/${f}" 2>/dev/null || true
             brew install --only-dependencies --build-from-source "${TAP}/${f}" || true
             brew install --build-bottle --ignore-dependencies "${TAP}/${f}"
+            chmod -R u+rwX "$(brew --cellar)/${f}"
             brew bottle --json --root-url="$ROOT_URL" "${TAP}/${f}"
           done
         timeout-minutes: 60
