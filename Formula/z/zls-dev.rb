@@ -16,7 +16,7 @@ class ZlsDev < Formula
 
   desc "Development build of the ZLS language server for Zig"
   homepage "https://zigtools.org/zls/"
-  url "https://builds.zigtools.org/zls-#{os}-#{arch}-0.16.0-dev.281+bde49ab4.tar.xz"
+  url "https://builds.zigtools.org/zls-#{arch}-#{os}-0.16.0-dev.281+bde49ab4.tar.xz"
   version "0.16.0-dev.281+bde49ab4"
   license "MIT"
   head "https://github.com/zigtools/zls.git", branch: "master"
