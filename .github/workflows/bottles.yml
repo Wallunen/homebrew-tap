@@ -57,7 +57,7 @@ jobs:
 
       - run: brew test-bot --only-setup
 
-      - run: brew test-bot --only-formulae --only-json-tab --testing-formulae="${{ steps.formulae.outputs.list }}" --root-url="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
+      - run: brew test-bot --only-formulae --only-json-tab --build-from-source --testing-formulae="${{ steps.formulae.outputs.list }}" --root-url="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
         timeout-minutes: 60
 
       - name: Upload bottles
