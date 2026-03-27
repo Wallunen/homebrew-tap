@@ -46,10 +46,10 @@ jobs:
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            formulae=$(find Formula -name '*.rb' -exec basename -s .rb {} + | paste -sd,)
+            formulae=$(find Formula -name '*.rb' -exec basename -s .rb {} + | tr '\n' ',' | sed 's/,$//')
           else
             formulae=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- Formula/ \
-              | xargs -n1 basename -s .rb | paste -sd,)
+              | xargs -n1 basename -s .rb | tr '\n' ',' | sed 's/,$//')
           fi
           echo "list=$formulae" >> "$GITHUB_OUTPUT"
 
