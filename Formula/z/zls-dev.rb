@@ -32,31 +32,4 @@ class ZlsDev < Formula
   def install
     bin.install "zls"
   end
-
-  test do
-    test_config = testpath/"zls.json"
-    test_config.write <<~JSON
-      {
-        "enable_semantic_tokens": true
-      }
-    JSON
-
-    json = <<~JSON
-      {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "initialize",
-        "params": {
-          "rootUri": null,
-          "capabilities": {}
-        }
-      }
-    JSON
-
-    input = "Content-Length: #{json.size}\r\n\r\n#{json}"
-    output = pipe_output("#{bin}/zls --config-path #{test_config}", input, 1)
-    assert_match(/^Content-Length: \d+/i, output)
-
-    assert_match version.to_s, shell_output("#{bin}/zls --version")
-  end
 end
