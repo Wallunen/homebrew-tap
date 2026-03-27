@@ -57,16 +57,11 @@ jobs:
           TAP="${{ github.repository_owner }}/tap"
           IFS=',' read -ra formulae <<< "${{ steps.formulae.outputs.list }}"
 
-          # Install all dependencies first
           for f in "${formulae[@]}"; do
+            brew uninstall --ignore-dependencies "${TAP}/${f}" 2>/dev/null || true
             brew install --only-dependencies --build-from-source "${TAP}/${f}" || true
-          done
-
-          # Install and bottle each formula
-          for f in "${formulae[@]}"; do
             brew install --build-bottle --ignore-dependencies "${TAP}/${f}"
             brew bottle --json --root-url="$ROOT_URL" "${TAP}/${f}"
-            brew uninstall "${TAP}/${f}"
           done
         timeout-minutes: 60
 
