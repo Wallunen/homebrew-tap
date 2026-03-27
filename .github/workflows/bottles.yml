@@ -52,7 +52,7 @@ jobs:
           ROOT_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
           IFS=',' read -ra formulae <<< "${{ steps.formulae.outputs.list }}"
           for f in "${formulae[@]}"; do
-            brew install --build-bottle "${{ github.repository_owner }}/tap/${f}"
+            brew install --build-bottle --build-from-source "${{ github.repository_owner }}/tap/${f}"
             brew bottle --json --root-url="$ROOT_URL" "${{ github.repository_owner }}/tap/${f}"
           done
         timeout-minutes: 60
