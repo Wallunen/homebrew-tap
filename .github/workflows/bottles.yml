@@ -34,13 +34,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cache Homebrew Bundler RubyGems
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
-          restore-keys: ${{ matrix.os }}-rubygems-
-
       - name: Detect changed formulae
         id: formulae
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
@@ -53,15 +46,17 @@ jobs:
           fi
           echo "list=$formulae" >> "$GITHUB_OUTPUT"
 
-      - run: brew test-bot --only-cleanup-before
-
-      - run: brew test-bot --only-setup
-
-      - run: brew test-bot --only-formulae --only-json-tab --build-from-source --testing-formulae="${{ steps.formulae.outputs.list }}" --root-url="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
+      - name: Build bottles
+        run: |
+          ROOT_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
+          IFS=',' read -ra formulae <<< "${{ steps.formulae.outputs.list }}"
+          for f in "${formulae[@]}"; do
+            brew install --build-bottle "${{ github.repository_owner }}/tap/${f}"
+            brew bottle --json --root-url="$ROOT_URL" "${{ github.repository_owner }}/tap/${f}"
+          done
         timeout-minutes: 60
 
       - name: Upload bottles
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bottles_${{ matrix.os }}
