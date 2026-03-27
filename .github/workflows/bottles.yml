@@ -47,6 +47,7 @@ jobs:
           echo "list=$formulae" >> "$GITHUB_OUTPUT"
 
       - name: Build bottles
+        shell: bash
         run: |
           ROOT_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
           IFS=',' read -ra formulae <<< "${{ steps.formulae.outputs.list }}"
