@@ -1,0 +1,106 @@
+name: Build and publish bottles
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - Formula/**/*.rb
+
+jobs:
+  bottle:
+    if: github.actor != 'github-actions[bot]'
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-15-intel
+          - macos-26
+        include:
+          - os: ubuntu-latest
+            container: ghcr.io/homebrew/brew:main
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    permissions:
+      actions: read
+      checks: read
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Homebrew Bundler RubyGems
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ matrix.os }}-rubygems-
+
+      - run: brew test-bot --only-cleanup-before
+
+      - run: brew test-bot --only-setup
+
+      - run: brew test-bot --only-tap-syntax
+        if: matrix.os == 'ubuntu-latest'
+
+      - run: brew test-bot --only-formulae --only-json-tab --root-url="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}"
+        timeout-minutes: 60
+
+      - name: Upload bottles
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bottles_${{ matrix.os }}
+          if-no-files-found: ignore
+          path: "*.bottle.*"
+
+  publish:
+    needs: bottle
+    if: success()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download bottles
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bottles_*
+          merge-multiple: true
+
+      - name: Upload bottles to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.sha }}" \
+            --repo "${{ github.repository }}" \
+            --title "Bottles for ${GITHUB_SHA::8}" \
+            --notes "Automated bottle build for commit ${GITHUB_SHA}" \
+            *.bottle.tar.gz
+
+      - name: Update formulae with bottle blocks
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
+        run: brew bottle --merge --write --no-commit *.bottle.json
+
+      - name: Set up git
+        uses: Homebrew/actions/git-user-config@main
+
+      - name: Commit and push
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        run: |
+          if ! git diff --quiet -- Formula/; then
+            git add Formula/
+            git commit -m "Update bottle blocks"
+            git push
+          fi
