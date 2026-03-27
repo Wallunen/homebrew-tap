@@ -67,7 +67,7 @@ jobs:
         timeout-minutes: 60
 
       - name: Upload bottles
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bottles_${{ matrix.os }}
           if-no-files-found: ignore
@@ -87,7 +87,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download bottles
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: bottles_*
           merge-multiple: true
