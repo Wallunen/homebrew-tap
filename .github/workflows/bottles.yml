@@ -2,15 +2,9 @@ name: Build and publish bottles
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - Formula/**/*.rb
 
 jobs:
   bottle:
-    if: github.event.head_commit.message != 'Update bottle blocks'
     strategy:
       fail-fast: false
       matrix:
@@ -22,29 +16,12 @@ jobs:
             container: ghcr.io/homebrew/brew:main
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
-    permissions:
-      actions: read
-      checks: read
-      contents: read
-      pull-requests: read
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Detect changed formulae
-        id: formulae
-        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            formulae=$(find Formula -name '*.rb' -exec basename -s .rb {} + | tr '\n' ',' | sed 's/,$//')
-          else
-            formulae=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- Formula/ \
-              | xargs -n1 basename -s .rb | tr '\n' ',' | sed 's/,$//')
-          fi
-          echo "list=$formulae" >> "$GITHUB_OUTPUT"
 
       - name: Install development tools
         if: runner.os == 'Linux'
@@ -56,7 +33,8 @@ jobs:
         run: |
           ROOT_URL="https://github.com/${{ github.repository }}/releases/download/bottles-${GITHUB_SHA::8}"
           TAP="${{ github.repository_owner }}/tap"
-          IFS=',' read -ra formulae <<< "${{ steps.formulae.outputs.list }}"
+          formulae=$(find "${{ steps.set-up-homebrew.outputs.repository-path }}/Formula" -name '*.rb' -exec basename -s .rb {} + | tr '\n' ',' | sed 's/,$//')
+          IFS=',' read -ra formulae <<< "$formulae"
 
           for f in "${formulae[@]}"; do
             brew uninstall --ignore-dependencies "${TAP}/${f}" 2>/dev/null || true
@@ -106,7 +84,7 @@ jobs:
           gh release create "bottles-${GITHUB_SHA::8}" \
             --repo "${{ github.repository }}" \
             --title "Bottles for ${GITHUB_SHA::8}" \
-            --notes "Automated bottle build for commit ${GITHUB_SHA}" \
+            --notes "Automated bottle build" \
             *.bottle.*.tar.gz
 
       - name: Update formulae with bottle blocks

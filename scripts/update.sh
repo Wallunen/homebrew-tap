@@ -84,7 +84,3 @@ if [ "${update_zls}" = 1 ]; then
     "${url}" \
     '[]'
 fi
-
-if [ -n "${CI-}" ]; then
-  git push
-fi
