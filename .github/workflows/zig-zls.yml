@@ -25,11 +25,6 @@ jobs:
       - name: Update
         id: update
         run: |
-          # Strip existing bottle blocks before updating
-          for f in Formula/z/*.rb; do
-            sed -i '/^  bottle do$/,/^  end$/d' "$f"
-          done
-
           before=$(git rev-parse HEAD)
           scripts/update.sh zig-dev zls-dev
 
@@ -121,7 +116,7 @@ jobs:
       - name: Rename bottles for upload
         run: |
           for file in *.bottle.*.tar.gz; do
-            mv "$file" "$(echo "$file" | sed 's/--/-/')"
+            mv "$file" "$(echo "$file" | sed -e 's/--/-/' -e 's/\.bottle\.[0-9]*\.tar\.gz/.bottle.tar.gz/')"
           done
 
       - name: Upload bottles to GitHub Release
