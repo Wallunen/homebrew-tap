@@ -115,7 +115,7 @@ jobs:
 
       - name: Rename bottles for upload
         run: |
-          for file in *.bottle.*.tar.gz; do
+          for file in *.bottle*.tar.gz; do
             mv "$file" "$(echo "$file" | sed -e 's/--/-/' -e 's/\.bottle\.[0-9]*\.tar\.gz/.bottle.tar.gz/')"
           done
 
@@ -127,7 +127,7 @@ jobs:
             --repo "${{ github.repository }}" \
             --title "Bottles for ${{ needs.update.outputs.branch }}" \
             --notes "Automated bottle build" \
-            *.bottle.*.tar.gz
+            *.bottle*.tar.gz
 
       - name: Update formulae with bottle blocks
         env:
