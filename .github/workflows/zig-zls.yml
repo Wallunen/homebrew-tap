@@ -116,7 +116,7 @@ jobs:
       - name: Rename bottles for upload
         run: |
           for file in *.bottle*.tar.gz; do
-            mv "$file" "$(echo "$file" | sed -e 's/--/-/' -e 's/\.bottle\.[0-9]*\.tar\.gz/.bottle.tar.gz/')"
+            mv "$file" "$(echo "$file" | sed 's/--/-/')"
           done
 
       - name: Upload bottles to GitHub Release
