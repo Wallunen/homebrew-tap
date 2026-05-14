@@ -2,10 +2,10 @@ class ZigDev < Formula
   os = "macos"
 
   bottle do
-    root_url "https://github.com/Wallunen/homebrew-tap/releases/download/bottles-update-20260513-175703"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "b6d81590b008332c73ef23c0b16839bc2e79384a8f6b020bc9f0f57144b0accf"
-    sha256 cellar: :any_skip_relocation, sequoia:      "ef52d72d26781c3e723dfc465bb60ecb45ca8ff0a04f2d21294d4cf227bd912c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "4c073a2e41a3c7d6ef4a71d7e40e4bc83a2cdb3e92a3a0b7c1795e632eb91f51"
+    root_url "https://github.com/Wallunen/homebrew-tap/releases/download/bottles-update-20260514-101013"
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "e13b9ab567350a46a0510fdad739f9af24798124777ae1f206634994f1dd1111"
+    sha256 cellar: :any_skip_relocation, sequoia:      "65fe5dffa317ad241c95ebc883a6ada09e5a9e96a5ae1a0cba2907b8cbdb3587"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "80588da741391ee5d7ff55f1a2961a2d5129a1bae9557b9663e962228c0a15ff"
   end
 
   arch = "x86_64"
