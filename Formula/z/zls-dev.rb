@@ -2,11 +2,11 @@ class ZlsDev < Formula
   os = "macos"
 
   bottle do
-    root_url "https://github.com/Wallunen/homebrew-tap/releases/download/bottles-update-20260813-012503"
-    rebuild 63
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "49f8b3c8e647249061c6cb1f399457a4f2d7b97d851373a5886d842cdf913960"
-    sha256 cellar: :any_skip_relocation, sequoia:      "cd13240b9d77fdd4a79cdb0ba0b6af3553e3364a89e39cc51da1a86d94aca547"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "0145a7e84dda59d94aeec88f3adde8c7fbff263b1bf411fe3343a4c65540c35e"
+    root_url "https://github.com/Wallunen/homebrew-tap/releases/download/bottles-update-20260814-012414"
+    rebuild 64
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "410015f104757bd0fa99d922bf14cedf473d15039944ff4279fa285ae4c256f4"
+    sha256 cellar: :any_skip_relocation, sequoia:      "60013ac891966b18d53a44839ff670cd61753cd2cdd4ce8358f013f9bf0b58c9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "1737e43c351173df97fec3969ca5052fa45435447273db62ac7700bdbc2bc4dd"
   end
 
   arch = "x86_64"
